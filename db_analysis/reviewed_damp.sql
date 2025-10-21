@@ -16,7 +16,6 @@ CREATE TABLE orders (
     name                       VARCHAR(200)             NOT NULL COMMENT 'Название заказа',
     description                TEXT                     NULL COMMENT 'Дополнительная информация',
     pay_type                   TINYINT                  NOT NULL COMMENT 'Тип оплаты например: 1-карта, 2-перевод, 3-наличные',
-    pay_date_execution         DATETIME                 NULL COMMENT 'Дата действия текущей цены',
     discount                   DECIMAL(5,2)             NULL COMMENT 'Процент скидки (0-100)',
     cur_rate                   DECIMAL(10,6) DEFAULT 1  NULL COMMENT 'Курс на момент оплаты',
     spec_price                 BOOLEAN    DEFAULT FALSE NULL COMMENT 'Установлена спец цена',
@@ -31,23 +30,24 @@ CREATE TABLE orders (
     product_review             BOOLEAN    DEFAULT FALSE NULL COMMENT 'Оставлен отзыв',
     process                    BOOLEAN    DEFAULT FALSE NULL COMMENT 'Метка массовой обработки',
     show_msg                   BOOLEAN    DEFAULT FALSE NULL COMMENT 'Показывать спец. сообщение',
-    create_date                DATETIME                 NOT NULL COMMENT 'Дата создания',
-    update_date                DATETIME                 NULL ON UPDATE CURRENT_TIMESTAMP COMMENT 'Дата изменения',
-    cancel_date                DATETIME                 NULL COMMENT 'Дата отмены',
-    fact_date                  DATETIME                 NULL COMMENT 'Фактическая дата поставки',
-    sending_date               DATETIME                 NULL COMMENT 'Расчетная дата поставки',
     full_payment_date          DATE                     NULL COMMENT 'Дата полной оплаты',
     mirror                     SMALLINT                 NULL COMMENT 'Метка зеркала',
     entrance_review            SMALLINT    DEFAULT 0    NULL COMMENT 'Счетчик просмотров отзывов',
     address_payer              INT                      NULL COMMENT 'ID адреса плательщика',
     bank_details               TEXT                     NULL COMMENT 'Реквизиты банка',
+    pay_date_execution         DATETIME                 NULL COMMENT 'Дата действия текущей цены',
+    fact_date                  DATETIME                 NULL COMMENT 'Фактическая дата поставки',
+    sending_date               DATETIME                 NULL COMMENT 'Расчетная дата поставки',
+    canceled_at                TIMESTAMP                NULL COMMENT 'Дата отмены',
+    updated_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_orders_manager FOREIGN KEY (manager_id) REFERENCES managers(id),
     CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_orders_status FOREIGN KEY (status_id) REFERENCES order_statuses(id)
 ) COMMENT 'Хранит информацию о заказах';
 CREATE INDEX idx_orders_status_id ON orders (status_id);
-CREATE INDEX idx_orders_create_date ON orders (create_date);
+CREATE INDEX idx_orders_create_date ON orders (created_at);
 CREATE INDEX idx_orders_user_id ON orders (user_id);
 CREATE INDEX idx_orders_manager_id ON orders (manager_id);
 

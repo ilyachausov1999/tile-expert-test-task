@@ -14,10 +14,26 @@ services:
         arguments:
             $baseApiUrl: '%env(TILE_EXPERT_BASE_URL)%'
 
+    App\Repository\:
+        resource: '../src/Repository/'
+        tags: [ 'doctrine.repository_service' ]
+
     App\Service\PriceParse\PriceParserService:
         arguments:
             $apiHelper: '@App\Helper\ApiHelper'
 
+    App\Service\Order\OrderService:
+        arguments:
+            $orderRepository: '@App\Repository\OrderRepository'
+
     App\Controller\PriceController:
         arguments:
             $priceParser: '@App\Service\PriceParse\PriceParserService'
+
+    App\Controller\OrderController:
+        arguments:
+            $orderService: '@App\Service\Order\OrderService'
+
+    App\DataFixtures\:
+        resource: '../src/DataFixtures/*'
+        tags: [ 'doctrine.fixture.orm' ]

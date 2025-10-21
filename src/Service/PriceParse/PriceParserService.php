@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Service\PriceParse;
 
 use App\Dto\PriceRequestDto;
+use App\Dto\PriceResponseDto;
 use App\Enum\ParsePriceEnum;
 use App\Exception\PriceParserException;
 use App\Helper\ApiRequestInterface;
@@ -20,10 +21,10 @@ readonly class PriceParserService implements PriceParserServiceInterface
 
     /**
      * @param PriceRequestDto $priceDto
-     * @return float|null
+     * @return PriceResponseDto
      * @throws Exception
      */
-    public function getPrice(PriceRequestDto $priceDto): ?float
+    public function getPrice(PriceRequestDto $priceDto): PriceResponseDto
     {
         $url = $this->buildUrl($priceDto);
 
@@ -31,7 +32,7 @@ readonly class PriceParserService implements PriceParserServiceInterface
             $response = $this->apiHelper->sendApiRequest($url);
 
             if ($response->getStatusCode() !== 200) {
-                return null;
+                throw new PriceParserException('Price page not available for the requested');
             }
 
             $content = $response->getBody()->getContents();
@@ -40,10 +41,15 @@ readonly class PriceParserService implements PriceParserServiceInterface
             $priceNode = $crawler->filter(ParsePriceEnum::PRICE_SELECTOR->value);
 
             if($priceNode->count() > 0 && $price = $priceNode->attr(ParsePriceEnum::PRICE_ATTR->value)) {
-                return $this->parsePriceFromText($price);
+                return new PriceResponseDto(
+                    price: $this->parsePriceFromText($price),
+                    factory: $priceDto->getFactory(),
+                    collection: $priceDto->getCollection(),
+                    article: $priceDto->getArticle()
+                );
             }
 
-            return null;
+            throw new PriceParserException('Price not available for the requested product');
         } catch (GuzzleException $e) {
             throw new PriceParserException(
                 sprintf('Can\'t found price by url:%s', $url),
