@@ -44,25 +44,25 @@ class PriceRequestDto
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFactory(): string
+    public function getFactory(): ?string
     {
         return $this->factory;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getCollection(): string
+    public function getCollection(): ?string
     {
         return $this->collection;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getArticle(): string
+    public function getArticle(): ?string
     {
         return $this->article;
     }

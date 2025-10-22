@@ -55,7 +55,7 @@ readonly class PriceResponseDto
             'collection' => $this->collection,
             'article' => $this->article,
             'error' => $this->error,
-            'details' => $this->details ?: null,
+            'details' => $this->details ?: [],
         ], fn($value) => $value !== null);
     }
 }

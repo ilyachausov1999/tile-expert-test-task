@@ -95,8 +95,9 @@ final class OrderController extends AbstractController
         description: "Order details",
         content: new OA\JsonContent(ref: new Model(type: Order::class))
     )]
-    public function getOrderDetail(int $id): JsonResponse
+    public function getOrderDetail($id): JsonResponse
     {
+        $id = (int)$id;
         try {
             $orderData = $this->orderService->getOrderDetail($id);
 
