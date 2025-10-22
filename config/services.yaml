@@ -25,7 +25,10 @@ services:
     App\Service\Order\OrderService:
         arguments:
             $orderRepository: '@App\Repository\OrderRepository'
+            $deliveryRepository: '@App\Repository\OrderDeliveryRepository'
+            $articlesRepository: '@App\Repository\OrderArticlesRepository'
             $serializer: '@serializer'
+            $entityManager: '@doctrine.orm.entity_manager'
 
     App\Controller\PriceController:
         arguments:
@@ -34,6 +37,11 @@ services:
     App\Controller\OrderController:
         arguments:
             $orderService: '@App\Service\Order\OrderService'
+
+    App\Controller\SoapOrderController:
+        arguments:
+            $orderService: '@App\Service\Order\OrderService'
+            $parameterBag: '@parameter_bag'
 
     App\DataFixtures\:
         resource: '../src/DataFixtures/*'

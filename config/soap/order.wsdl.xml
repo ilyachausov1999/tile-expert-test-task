@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="OrderService"
+             targetNamespace="http://tile-expert.com/soap/order"
+             xmlns:tns="http://tile-expert.com/soap/order"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <types>
+        <xsd:schema targetNamespace="http://tile-expert.com/soap/order">
+            <xsd:element name="CreateOrderRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="userId" type="xsd:int" minOccurs="0"/>
+                        <xsd:element name="managerId" type="xsd:int"/>
+                        <xsd:element name="statusId" type="xsd:int"/>
+                        <xsd:element name="name" type="xsd:string"/>
+                        <xsd:element name="description" type="xsd:string" minOccurs="0"/>
+                        <xsd:element name="payType" type="xsd:int"/>
+                        <xsd:element name="locale" type="xsd:string"/>
+                        <xsd:element name="currency" type="xsd:string"/>
+                        <xsd:element name="measure" type="xsd:string"/>
+                        <xsd:element name="articles" type="tns:ArticleList"/>
+                        <xsd:element name="delivery" type="tns:DeliveryData" minOccurs="0"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:complexType name="ArticleList">
+                <xsd:sequence>
+                    <xsd:element name="article" type="tns:ArticleData" minOccurs="1" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="ArticleData">
+                <xsd:sequence>
+                    <xsd:element name="articleId" type="xsd:int"/>
+                    <xsd:element name="amount" type="xsd:decimal"/>
+                    <xsd:element name="price" type="xsd:decimal"/>
+                    <xsd:element name="displayMeasure" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="specialNotes" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="DeliveryData">
+                <xsd:sequence>
+                    <xsd:element name="countryId" type="xsd:int" minOccurs="0"/>
+                    <xsd:element name="regionId" type="xsd:int" minOccurs="0"/>
+                    <xsd:element name="cityId" type="xsd:int" minOccurs="0"/>
+                    <xsd:element name="amount" type="xsd:decimal" minOccurs="0"/>
+                    <xsd:element name="typeId" type="xsd:int"/>
+                    <xsd:element name="fullAddress" type="xsd:string"/>
+                    <xsd:element name="address" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="postalCode" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:element name="CreateOrderResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="success" type="xsd:boolean"/>
+                        <xsd:element name="orderId" type="xsd:int" minOccurs="0"/>
+                        <xsd:element name="orderNumber" type="xsd:string" minOccurs="0"/>
+                        <xsd:element name="hash" type="xsd:string"/>
+                        <xsd:element name="token" type="xsd:string"/>
+                        <xsd:element name="message" type="xsd:string" minOccurs="0"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="SoapFault">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="faultcode" type="xsd:string"/>
+                        <xsd:element name="faultstring" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+        </xsd:schema>
+    </types>
+
+    <message name="CreateOrderInput">
+        <part name="parameters" element="tns:CreateOrderRequest"/>
+    </message>
+
+    <message name="CreateOrderOutput">
+        <part name="parameters" element="tns:CreateOrderResponse"/>
+    </message>
+
+    <message name="SoapFault">
+        <part name="parameters" element="tns:SoapFault"/>
+    </message>
+
+    <portType name="OrderPortType">
+        <operation name="createOrder">
+            <input message="tns:CreateOrderInput"/>
+            <output message="tns:CreateOrderOutput"/>
+            <fault name="fault" message="tns:SoapFault"/>
+        </operation>
+    </portType>
+
+    <binding name="OrderBinding" type="tns:OrderPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="createOrder">
+            <soap:operation soapAction="http://tile-expert.com/soap/order/createOrder"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </fault>
+        </operation>
+    </binding>
+
+    <service name="OrderService">
+        <port name="OrderPort" binding="tns:OrderBinding">
+            <soap:address location="http://localhost/soap/order"/>
+        </port>
+    </service>
+
+</definitions>

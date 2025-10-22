@@ -22,10 +22,6 @@ class OrderArticle
 
     #[ORM\Column(type: Types::INTEGER)]
     #[Groups(['order_articles'])]
-    private int $orderId;
-
-    #[ORM\Column(type: Types::INTEGER)]
-    #[Groups(['order_articles'])]
     private int $articleId;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 3)]
@@ -46,7 +42,7 @@ class OrderArticle
 
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 3)]
     #[Groups(['order_articles'])]
-    private string $weight;
+    private ?string $weight = "0.0";
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 3, nullable: true)]
     #[Groups(['order_articles'])]
@@ -65,7 +61,7 @@ class OrderArticle
     private \DateTimeInterface $updatedAt;
 
     #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'orderArticles')]
-    #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id', nullable: false)]
     private Order $order;
 
     public function __construct()
@@ -92,17 +88,6 @@ class OrderArticle
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getOrderId(): int
-    {
-        return $this->orderId;
-    }
-
-    public function setOrderId(int $orderId): self
-    {
-        $this->orderId = $orderId;
-        return $this;
     }
 
     public function getArticleId(): int

@@ -20,10 +20,6 @@ class OrderDelivery
     #[Groups(['order_delivery'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::INTEGER)]
-    #[Groups(['order_delivery'])]
-    private int $orderId;
-
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     #[Groups(['order_delivery'])]
     private ?int $countryId = null;
@@ -108,8 +104,8 @@ class OrderDelivery
     #[Groups(['order_delivery'])]
     private \DateTimeInterface $updatedAt;
 
-    #[ORM\OneToOne(targetEntity: Order::class, inversedBy: 'delivery')]
-    #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'orderArticles')]
+    #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id', nullable: false)]
     private Order $order;
 
     public function __construct()
@@ -127,17 +123,6 @@ class OrderDelivery
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getOrderId(): int
-    {
-        return $this->orderId;
-    }
-
-    public function setOrderId(int $orderId): self
-    {
-        $this->orderId = $orderId;
-        return $this;
     }
 
     public function getCountryId(): ?int

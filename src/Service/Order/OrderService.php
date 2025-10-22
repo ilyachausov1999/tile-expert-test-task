@@ -4,17 +4,27 @@ declare(strict_types = 1);
 
 namespace App\Service\Order;
 
+use App\Dto\CreateOrderRequestDto;
+use App\Dto\CreateOrderResponseDto;
 use App\Dto\OrdersGroupRequestDto;
 use App\Dto\OrdersGroupResponseDto;
 use App\Dto\OrdersGroupItemDto;
+use App\Repository\OrderArticlesRepository;
+use App\Repository\OrderDeliveryRepository;
 use App\Repository\OrderRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use SoapFault;
 use Symfony\Component\Serializer\SerializerInterface;
 
 readonly class OrderService implements OrderServiceInterface
 {
     public function __construct(
         private OrderRepository $orderRepository,
-        private SerializerInterface $serializer
+        private OrderDeliveryRepository $deliveryRepository,
+        private OrderArticlesRepository $articlesRepository,
+        private SerializerInterface $serializer,
+        private EntityManagerInterface $entityManager,
     ) {}
 
     /**
@@ -73,5 +83,39 @@ readonly class OrderService implements OrderServiceInterface
             'month' => "DATE_FORMAT(o.createdAt, '%Y-%m')",
             'year' => "DATE_FORMAT(o.createdAt, '%Y')",
         };
+    }
+
+    /**
+     * @throws SoapFault
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function createOrder(CreateOrderRequestDto $orderDto): CreateOrderResponseDto
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+
+        try {
+            $order = $this->orderRepository->createOrderEntity($orderDto);
+
+            $this->articlesRepository->createOrderArticles($order, $orderDto->articles);
+
+            if ($orderDto->delivery) {
+                $this->deliveryRepository->createOrderDelivery($order, $orderDto->delivery);
+            }
+
+            $this->entityManager->flush();
+            $this->entityManager->getConnection()->commit();
+
+            return new CreateOrderResponseDto(
+                success: true,
+                orderId: $order->getId(),
+                orderNumber: $order->getNumber(),
+                hash: $order->getHash(),
+                token: $order->getToken(),
+                message: 'Order created successfully'
+            );
+        } catch (Exception $e) {
+            $this->entityManager->getConnection()->rollBack();
+            throw new SoapFault('SERVER', 'Failed to create order: ' . $e->getMessage());
+        }
     }
 }
