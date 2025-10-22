@@ -4,146 +4,173 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\OrderRepository;
 use DateTime;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity(repositoryClass: OrderRepository::class)]
+#[ORM\Entity]
 #[ORM\Table(name: 'orders')]
-#[ORM\Index(name: 'idx_orders_create_date', columns: ['created_at'])]
-#[ORM\Index(name: 'idx_orders_manager_id', columns: ['manager_id'])]
-#[ORM\Index(name: 'idx_orders_status_id', columns: ['status_id'])]
-#[ORM\Index(name: 'idx_orders_user_id', columns: ['user_id'])]
 class Order
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER)]
+    #[Groups(['order_detail'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 32, unique: true)]
+    #[Groups(['order_detail'])]
     private string $hash;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['order_detail'])]
     private ?int $userId = null;
 
     #[ORM\Column(type: Types::INTEGER)]
+    #[Groups(['order_detail'])]
     private int $managerId;
 
     #[ORM\Column(type: Types::INTEGER)]
+    #[Groups(['order_detail'])]
     private int $statusId;
 
     #[ORM\Column(type: Types::STRING, length: 64, unique: true)]
+    #[Groups(['order_detail'])]
     private string $token;
 
     #[ORM\Column(type: Types::STRING, length: 15, unique: true, nullable: true)]
+    #[Groups(['order_detail'])]
     private ?string $number = null;
 
     #[ORM\Column(type: Types::STRING, length: 200)]
+    #[Groups(['order_detail'])]
     private string $name;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['order_detail'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Groups(['order_detail'])]
     private int $payType;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2, nullable: true)]
+    #[Groups(['order_detail'])]
     private ?string $discount = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 6, options: ['default' => '1.000000'])]
+    #[Groups(['order_detail'])]
     private string $curRate = '1.000000';
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    #[Groups(['order_detail'])]
     private bool $specPrice = false;
 
     #[ORM\Column(type: Types::STRING, length: 5)]
+    #[Groups(['order_detail'])]
     private string $locale;
 
     #[ORM\Column(type: Types::STRING, length: 3, options: ['default' => 'EUR'])]
+    #[Groups(['order_detail'])]
     private string $currency = 'EUR';
 
     #[ORM\Column(type: Types::STRING, length: 3, options: ['default' => 'm'])]
+    #[Groups(['order_detail'])]
     private string $measure = 'm';
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 3, nullable: true)]
+    #[Groups(['order_detail'])]
     private ?string $weightGross = null;
 
     #[ORM\Column(type: Types::SMALLINT, options: ['default' => 1])]
+    #[Groups(['order_detail'])]
     private int $step = 1;
 
     #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['default' => true])]
+    #[Groups(['order_detail'])]
     private ?bool $addressEqual = true;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    #[Groups(['order_detail'])]
     private bool $bankTransferRequested = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    #[Groups(['order_detail'])]
     private bool $acceptPay = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    #[Groups(['order_detail'])]
     private bool $productReview = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    #[Groups(['order_detail'])]
     private bool $process = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    #[Groups(['order_detail'])]
     private bool $showMsg = false;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?DateTimeInterface $fullPaymentDate = null;
+    #[Groups(['order_detail'])]
+    private ?\DateTimeInterface $fullPaymentDate = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    #[Groups(['order_detail'])]
     private ?int $mirror = null;
 
     #[ORM\Column(type: Types::SMALLINT, options: ['default' => 0])]
+    #[Groups(['order_detail'])]
     private int $entranceReview = 0;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['order_detail'])]
     private ?int $addressPayer = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['order_detail'])]
     private ?string $bankDetails = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?DateTimeInterface $payDateExecution = null;
+    #[Groups(['order_detail'])]
+    private ?\DateTimeInterface $payDateExecution = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?DateTimeInterface $factDate = null;
+    #[Groups(['order_detail'])]
+    private ?\DateTimeInterface $factDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?DateTimeInterface $sendingDate = null;
+    #[Groups(['order_detail'])]
+    private ?\DateTimeInterface $sendingDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?DateTimeInterface $canceledAt = null;
+    #[Groups(['order_detail'])]
+    private ?\DateTimeInterface $canceledAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private DateTimeInterface $updatedAt;
+    #[Groups(['order_detail'])]
+    private \DateTimeInterface $createdAt;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private DateTimeInterface $createdAt;
+    #[Groups(['order_detail'])]
+    private \DateTimeInterface $updatedAt;
 
-    // Связи (опционально - раскомментируйте если создадите сущности)
-    /*
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
-    private ?User $user = null;
+    #[ORM\OneToMany(targetEntity: OrderArticle::class, mappedBy: 'order')]
+    #[Groups(['order_articles'])]
+    private Collection $orderArticles;
 
-    #[ORM\ManyToOne(targetEntity: Manager::class)]
-    #[ORM\JoinColumn(name: 'manager_id', referencedColumnName: 'id')]
-    private Manager $manager;
-
-    #[ORM\ManyToOne(targetEntity: OrderStatus::class)]
-    #[ORM\JoinColumn(name: 'status_id', referencedColumnName: 'id')]
-    private OrderStatus $status;
-    */
+    #[ORM\OneToOne(targetEntity: OrderDelivery::class, mappedBy: 'order')]
+    #[Groups(['order_delivery'])]
+    private ?OrderDelivery $delivery = null;
 
     public function __construct()
     {
-        $this->createdAt = new DateTime();
-        $this->updatedAt = new DateTime();
+        $this->orderArticles = new ArrayCollection();
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
     }
 
     #[ORM\PreUpdate]
@@ -545,6 +572,52 @@ class Order
     public function markAsPaid(): self
     {
         $this->fullPaymentDate = new DateTime();
+        return $this;
+    }
+
+    public function getOrderArticles(): Collection
+    {
+        return $this->orderArticles;
+    }
+
+    public function getDelivery(): ?OrderDelivery
+    {
+        return $this->delivery;
+    }
+
+    public function addOrderArticle(OrderArticle $orderArticle): self
+    {
+        if (!$this->orderArticles->contains($orderArticle)) {
+            $this->orderArticles[] = $orderArticle;
+            $orderArticle->setOrder($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderArticle(OrderArticle $orderArticle): self
+    {
+        if ($this->orderArticles->removeElement($orderArticle)) {
+            if ($orderArticle->getOrder() === $this) {
+                $orderArticle->setOrder(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function setDelivery(?OrderDelivery $delivery): self
+    {
+        if ($delivery === null && $this->delivery !== null) {
+            $this->delivery->setOrder(null);
+        }
+
+        if ($delivery !== null && $delivery->getOrder() !== $this) {
+            $delivery->setOrder($this);
+        }
+
+        $this->delivery = $delivery;
+
         return $this;
     }
 }

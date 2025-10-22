@@ -36,6 +36,9 @@ final class PriceController extends AbstractController
             return $this->jsonError('Validation failed', $this->formatValidationErrors($errors));
         }
 
+        // todo можно было бы еще парсить больше данных по артикулам и записывать в БД при необходимости
+        // todo или класть в кэш если они не часто обновляются на сайте
+
         try {
             $priceResponseDto = $this->priceParser->getPrice($priceRequestDto);
             return $this->jsonSuccess($priceResponseDto->toArray());

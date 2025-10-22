@@ -25,6 +25,7 @@ services:
     App\Service\Order\OrderService:
         arguments:
             $orderRepository: '@App\Repository\OrderRepository'
+            $serializer: '@serializer'
 
     App\Controller\PriceController:
         arguments:

@@ -20,6 +20,23 @@ class OrderRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param int $orderId
+     * @return Order|null
+     */
+    public function getOrderDetail(int $orderId): ?Order
+    {
+        return $this->createQueryBuilder('o')
+            ->leftJoin('o.orderArticles', 'articles')
+            ->leftJoin('o.delivery', 'delivery')
+            ->addSelect('articles')
+            ->addSelect('delivery')
+            ->where('o.id = :id')
+            ->setParameter('id', $orderId)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
      * @return int
      */
     public function getTotalOrdersCount(): int

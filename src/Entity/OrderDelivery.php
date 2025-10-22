@@ -8,107 +8,109 @@ use DateTime;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'orders_delivery')]
-#[ORM\Index(name: 'idx_delivery_order_id', columns: ['order_id'])]
-#[ORM\Index(name: 'idx_delivery_country_id', columns: ['country_id'])]
-#[ORM\Index(name: 'idx_delivery_region_id', columns: ['region_id'])]
-#[ORM\Index(name: 'idx_delivery_city_id', columns: ['city_id'])]
-#[ORM\Index(name: 'idx_delivery_location', columns: ['country_id', 'region_id', 'city_id'])]
-#[ORM\Index(name: 'idx_delivery_region_city', columns: ['region_id', 'city_id'])]
-#[ORM\HasLifecycleCallbacks]
 class OrderDelivery
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER)]
+    #[Groups(['order_delivery'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::INTEGER)]
+    #[Groups(['order_delivery'])]
     private int $orderId;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['order_delivery'])]
     private ?int $countryId = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['order_delivery'])]
     private ?int $regionId = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['order_delivery'])]
     private ?int $cityId = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    #[Groups(['order_delivery'])]
     private ?string $amount = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
+    #[Groups(['order_delivery'])]
     private bool $typeId = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
+    #[Groups(['order_delivery'])]
     private bool $calculateTypeId = false;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?DateTimeInterface $timeMin = null;
+    #[Groups(['order_delivery'])]
+    private ?\DateTimeInterface $timeMin = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?DateTimeInterface $timeMax = null;
+    #[Groups(['order_delivery'])]
+    private ?\DateTimeInterface $timeMax = null;
 
     #[ORM\Column(type: Types::STRING, length: 500)]
+    #[Groups(['order_delivery'])]
     private string $fullAddress;
 
     #[ORM\Column(type: Types::STRING, length: 500, nullable: true)]
+    #[Groups(['order_delivery'])]
     private ?string $address = null;
 
     #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
+    #[Groups(['order_delivery'])]
     private ?string $building = null;
 
     #[ORM\Column(type: Types::STRING, length: 30, nullable: true)]
+    #[Groups(['order_delivery'])]
     private ?string $apartmentOffice = null;
 
     #[ORM\Column(type: Types::STRING, length: 20, nullable: true)]
+    #[Groups(['order_delivery'])]
     private ?string $postalCode = null;
 
     #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
+    #[Groups(['order_delivery'])]
     private ?string $trackingNumber = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['order_delivery'])]
     private ?int $carrierId = null;
 
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    #[Groups(['order_delivery'])]
     private ?bool $offsetReason = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?DateTimeInterface $offsetDate = null;
+    #[Groups(['order_delivery'])]
+    private ?\DateTimeInterface $offsetDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?DateTimeInterface $proposedDate = null;
+    #[Groups(['order_delivery'])]
+    private ?\DateTimeInterface $proposedDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?DateTimeInterface $shipDate = null;
+    #[Groups(['order_delivery'])]
+    private ?\DateTimeInterface $shipDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private DateTimeInterface $createdAt;
+    #[Groups(['order_delivery'])]
+    private \DateTimeInterface $createdAt;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private DateTimeInterface $updatedAt;
+    #[Groups(['order_delivery'])]
+    private \DateTimeInterface $updatedAt;
 
-    // Связи (раскомментируйте когда создадите сущности)
-    /*
     #[ORM\OneToOne(targetEntity: Order::class, inversedBy: 'delivery')]
     #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id')]
     private Order $order;
-
-    #[ORM\ManyToOne(targetEntity: Country::class)]
-    #[ORM\JoinColumn(name: 'country_id', referencedColumnName: 'id')]
-    private ?Country $country = null;
-
-    #[ORM\ManyToOne(targetEntity: Region::class)]
-    #[ORM\JoinColumn(name: 'region_id', referencedColumnName: 'id')]
-    private ?Region $region = null;
-
-    #[ORM\ManyToOne(targetEntity: City::class)]
-    #[ORM\JoinColumn(name: 'city_id', referencedColumnName: 'id')]
-    private ?City $city = null;
-    */
 
     public function __construct()
     {
@@ -386,5 +388,16 @@ class OrderDelivery
     public function hasTracking(): bool
     {
         return $this->trackingNumber !== null && $this->trackingNumber !== '';
+    }
+
+    public function getOrder(): Order
+    {
+        return $this->order;
+    }
+
+    public function setOrder(Order $order): self
+    {
+        $this->order = $order;
+        return $this;
     }
 }

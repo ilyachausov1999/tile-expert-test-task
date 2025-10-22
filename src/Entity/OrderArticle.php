@@ -8,64 +8,65 @@ use DateTime;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'orders_article')]
-#[ORM\Index(name: 'idx_orders_article_order_id', columns: ['order_id'])]
-#[ORM\Index(name: 'idx_orders_article_article_id', columns: ['article_id'])]
-#[ORM\Index(name: 'idx_orders_article_order_article', columns: ['order_id', 'article_id'])]
-#[ORM\Index(name: 'idx_orders_article_prices', columns: ['price'])]
-#[ORM\HasLifecycleCallbacks]
 class OrderArticle
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER)]
+    #[Groups(['order_articles'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::INTEGER)]
+    #[Groups(['order_articles'])]
     private int $orderId;
 
     #[ORM\Column(type: Types::INTEGER)]
+    #[Groups(['order_articles'])]
     private int $articleId;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 3)]
+    #[Groups(['order_articles'])]
     private string $amount;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Groups(['order_articles'])]
     private string $price;
 
     #[ORM\Column(type: Types::STRING, length: 3, nullable: true)]
+    #[Groups(['order_articles'])]
     private ?string $displayMeasure = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 6, options: ['default' => '1.000000'])]
+    #[Groups(['order_articles'])]
     private string $conversionRate = '1.000000';
 
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 3)]
-    private ?string $weight = null;
+    #[Groups(['order_articles'])]
+    private string $weight;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 3, nullable: true)]
+    #[Groups(['order_articles'])]
     private ?string $weightTotal = null;
 
     #[ORM\Column(type: Types::STRING, length: 500, nullable: true)]
+    #[Groups(['order_articles'])]
     private ?string $specialNotes = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private DateTimeInterface $createdAt;
+    #[Groups(['order_articles'])]
+    private \DateTimeInterface $createdAt;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private DateTimeInterface $updatedAt;
+    #[Groups(['order_articles'])]
+    private \DateTimeInterface $updatedAt;
 
-    // Связи (раскомментируйте когда создадите сущности)
-    /*
     #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'orderArticles')]
-    #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id')]
     private Order $order;
-
-    #[ORM\ManyToOne(targetEntity: Article::class)]
-    #[ORM\JoinColumn(name: 'article_id', referencedColumnName: 'id')]
-    private Article $article;
-    */
 
     public function __construct()
     {
@@ -208,5 +209,16 @@ class OrderArticle
     public function getUpdatedAt(): DateTimeInterface
     {
         return $this->updatedAt;
+    }
+
+    public function getOrder(): Order
+    {
+        return $this->order;
+    }
+
+    public function setOrder(Order $order): self
+    {
+        $this->order = $order;
+        return $this;
     }
 }

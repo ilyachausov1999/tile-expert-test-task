@@ -8,12 +8,33 @@ use App\Dto\OrdersGroupRequestDto;
 use App\Dto\OrdersGroupResponseDto;
 use App\Dto\OrdersGroupItemDto;
 use App\Repository\OrderRepository;
+use Symfony\Component\Serializer\SerializerInterface;
 
 readonly class OrderService implements OrderServiceInterface
 {
     public function __construct(
-        private OrderRepository $orderRepository
+        private OrderRepository $orderRepository,
+        private SerializerInterface $serializer
     ) {}
+
+    /**
+     * @param int $orderId
+     * @return array|null
+     */
+    public function getOrderDetail(int $orderId): ?array
+    {
+        $order = $this->orderRepository->getOrderDetail($orderId);
+
+        if (!$order) {
+            return null;
+        }
+
+        return $this->serializer->normalize($order, null, [
+            'groups' => ['order_detail', 'order_articles', 'order_delivery'],
+            'datetime_format' => 'Y-m-d H:i:s',
+            'date_format' => 'Y-m-d'
+        ]);
+    }
 
     /**
      * @param OrdersGroupRequestDto $groupRequestDto
