@@ -14,12 +14,11 @@ interface ManticoreSearchServiceInterface
 
     /**
      * @param string $query
-     * @param array $filters
      * @param int $limit
      * @param int $offset
      * @return array
      */
-    public function searchArticles(string $query, array $filters = [], int $limit = 50, int $offset = 0): array;
+    public function searchArticles(string $query, int $limit = 50, int $offset = 0): array;
 
     /**
      * @param int $articleId

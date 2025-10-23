@@ -2,16 +2,20 @@
 
 namespace App\Controller;
 
+use App\Trait\ApiResponseTrait;
 use OpenApi\Attributes as OA;
 use App\Service\Manticore\ManticoreSearchServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[OA\Tag(name: "Search articles")]
 class SearchController extends AbstractController
 {
+    use ApiResponseTrait;
+
     public function __construct(
         private readonly  ManticoreSearchServiceInterface $searchService
     ) {}
@@ -26,21 +30,7 @@ class SearchController extends AbstractController
         description: 'Search query text',
         in: 'query',
         required: true,
-        schema: new OA\Schema(type: 'string', example: 'плитка керамическая')
-    )]
-    #[OA\Parameter(
-        name: 'factory',
-        description: 'Filter by factory/manufacturer',
-        in: 'query',
-        required: false,
-        schema: new OA\Schema(type: 'string', example: 'abk')
-    )]
-    #[OA\Parameter(
-        name: 'collection',
-        description: 'Filter by collection name',
-        in: 'query',
-        required: false,
-        schema: new OA\Schema(type: 'string', example: 'poetry-net')
+        schema: new OA\Schema(type: 'string', example: 'SKU-000022')
     )]
     #[OA\Parameter(
         name: 'limit',
@@ -102,41 +92,24 @@ class SearchController extends AbstractController
     public function searchArticles(Request $request): JsonResponse
     {
         $query = $request->query->get('q', '');
-        $factory = $request->query->get('factory', '');
-        $collection = $request->query->get('collection', '');
         $limit = $request->query->getInt('limit', 50);
         $offset = $request->query->getInt('offset', 0);
 
         if (empty($query)) {
-            return $this->json([
-                'success' => false,
-                'error' => 'Search query is required'
-            ], 400);
+            return $this->jsonError('Search query is required', ['Search query is required']);
         }
 
         $limit = min($limit, 100);
 
-        $filters = [];
-        if (!empty($factory)) {
-            $filters['factory'] = $factory;
-        }
-        if (!empty($collection)) {
-            $filters['collection'] = $collection;
-        }
-
         try {
-            $results = $this->searchService->searchArticles($query, $filters, $limit, $offset);
-
-            return $this->json([
-                'success' => true,
-                'data' => $results
-            ]);
-
+            $results = $this->searchService->searchArticles($query, $limit, $offset);
+            return $this->jsonSuccess($results);
         } catch (\Exception $e) {
-            return $this->json([
-                'success' => false,
-                'error' => 'Search failed: ' . $e->getMessage()
-            ], 500);
+            return $this->jsonError(
+                'Search error',
+                ['Search failed: ' . $e->getMessage()],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
     }
     #[Route('/api/search/articles/{id}', name: 'api_delete_article', methods: ['DELETE'])]
@@ -173,19 +146,13 @@ class SearchController extends AbstractController
     {
         try {
             $this->searchService->deleteArticle($id);
-
-            return $this->json([
-                'success' => true,
-                'message' => 'Article deleted from search index'
-            ]);
-
+            return $this->jsonSuccess(['message' => 'Article deleted from search index']);
         } catch (\Exception $e) {
-            $statusCode = str_contains($e->getMessage(), '404') ? 404 : 500;
-
-            return $this->json([
-                'success' => false,
-                'error' => 'Failed to delete article: ' . $e->getMessage()
-            ], $statusCode);
+            return $this->jsonError(
+                'Failed to delete',
+                ['Failed to delete article: ' . $e->getMessage()],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
     }
 }

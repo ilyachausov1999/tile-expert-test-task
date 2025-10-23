@@ -34,12 +34,11 @@ class ManticoreSearchService implements ManticoreSearchServiceInterface
      * Поиск статей по текстовому запросу
      *
      * @param string $query
-     * @param array $filters
      * @param int $limit
      * @param int $offset
      * @return array
      */
-    public function searchArticles(string $query, array $filters = [], int $limit = 50, int $offset = 0): array
+    public function searchArticles(string $query, int $limit = 50, int $offset = 0): array
     {
         $searchQuery = [
             'index' => 'articles',
@@ -53,14 +52,6 @@ class ManticoreSearchService implements ManticoreSearchServiceInterface
             'limit' => $limit,
             'offset' => $offset
         ];
-
-        if (!empty($filters)) {
-            foreach ($filters as $field => $value) {
-                if (!empty($value)) {
-                    $searchQuery['query']['bool']['filter'][] = ['equals' => [$field => $value]];
-                }
-            }
-        }
 
         return $this->makeRequest('POST', '/search', ['json' => $searchQuery]);
 
