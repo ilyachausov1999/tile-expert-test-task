@@ -72,17 +72,10 @@ class Article
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['default' => 'CURRENT_TIMESTAMP'])]
     private DateTimeInterface $updatedAt;
 
-    // Связи (раскомментируйте когда нужно)
-    /*
-    #[ORM\OneToMany(targetEntity: OrderArticle::class, mappedBy: 'article')]
-    private Collection $orderArticles;
-    */
-
     public function __construct()
     {
         $this->createdAt = new DateTime();
         $this->updatedAt = new DateTime();
-        // $this->orderArticles = new ArrayCollection();
     }
 
     #[ORM\PreUpdate]

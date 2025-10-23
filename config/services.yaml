@@ -30,6 +30,13 @@ services:
             $serializer: '@serializer'
             $entityManager: '@doctrine.orm.entity_manager'
 
+    App\Service\Manticore\ManticoreSearchService:
+        arguments:
+            $httpClient: '@http_client'
+            $baseManticoreUrl: '%env(MANTICORE_URL)%'
+#            $manticoreHost: '%env(MANTICORE_HOST)%'
+#            $manticorePort: '%env(MANTICORE_HTTP_PORT)%'
+
     App\Controller\PriceController:
         arguments:
             $priceParser: '@App\Service\PriceParse\PriceParserService'
@@ -43,6 +50,16 @@ services:
             $orderService: '@App\Service\Order\OrderService'
             $parameterBag: '@parameter_bag'
 
+    App\Controller\SearchController:
+        arguments:
+            $searchService: '@App\Service\Manticore\ManticoreSearchService'
+
     App\DataFixtures\:
         resource: '../src/DataFixtures/*'
         tags: [ 'doctrine.fixture.orm' ]
+
+    App\Command\IndexArticlesCommand:
+        tags: [ 'console.command' ]
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+            $searchService: '@App\Service\Manticore\ManticoreSearchService'

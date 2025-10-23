@@ -35,6 +35,7 @@ docker-compose exec php bash
 composer install
 bin/console doctrine:migrations:migrate
 bin/console doctrine:fixtures:load
+bin/console app:index-articles
 ```
 
 ```bash

@@ -25,13 +25,6 @@ class City
     #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['default' => true])]
     private ?bool $isActive = true;
 
-    // Связи (раскомментируйте когда нужно)
-    /*
-    #[ORM\ManyToOne(targetEntity: Region::class)]
-    #[ORM\JoinColumn(name: 'region_id', referencedColumnName: 'id')]
-    private Region $region;
-    */
-
     public function getId(): ?int
     {
         return $this->id;

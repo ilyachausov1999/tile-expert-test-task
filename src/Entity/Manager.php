@@ -68,7 +68,6 @@ class Manager
         $this->updatedAt = new DateTime();
     }
 
-    // Геттеры и сеттеры
     public function getId(): ?int
     {
         return $this->id;

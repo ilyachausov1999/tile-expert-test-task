@@ -28,13 +28,6 @@ class Region
     #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['default' => true])]
     private ?bool $isActive = true;
 
-    // Связи (раскомментируйте когда нужно)
-    /*
-    #[ORM\ManyToOne(targetEntity: Country::class)]
-    #[ORM\JoinColumn(name: 'country_id', referencedColumnName: 'id')]
-    private Country $country;
-    */
-
     public function getId(): ?int
     {
         return $this->id;
