@@ -51,8 +51,6 @@ COPY --from=ghcr.io/symfony-cli/symfony-cli:latest /usr/local/bin/symfony /usr/l
 
 RUN chmod +x /usr/local/bin/symfony
 
-mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
-
 COPY ./docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
 
 RUN mkdir -p /var/www/html/var/cache /var/www/html/var/log \

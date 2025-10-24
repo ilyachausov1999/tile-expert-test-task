@@ -57,7 +57,7 @@ docker-compose exec php bash
 
 Там есть все пункты кроме создания заказа через SOAP, не хватило времени :(
 
-Его можно протестировать по http://localhost/soap/order , не забудьте настроить заголовки под XML
+Его можно протестировать в Postman POST http://localhost/soap/order , не забудьте настроить заголовки под XML
 
 Файл с тестовыми данными есть в корне проекта `createOrderTest.xml`
 

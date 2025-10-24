@@ -22,7 +22,7 @@ class OrderDeliveryFixtures extends Fixture implements DependentFixtureInterface
 
         for ($i = 0; $i < 25; $i++) {
             $delivery = new OrderDelivery();
-            $delivery->setOrderId($this->getReference('order_' . $i, Order::class)->getId());
+            $delivery->setOrder($this->getReference('order_' . $i, Order::class));
 
             if ($faker->boolean(80)) {
                 $city = $this->getReference('city_' . $faker->randomElement([

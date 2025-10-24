@@ -38,21 +38,21 @@ final class PriceController extends AbstractController
         description: 'Product factory/manufacturer',
         in: 'query',
         required: true,
-        schema: new OA\Schema(type: 'string', example: 'Porcelanosa')
+        schema: new OA\Schema(type: 'string', example: 'abk')
     )]
     #[OA\Parameter(
         name: 'collection',
         description: 'Product collection name',
         in: 'query',
         required: true,
-        schema: new OA\Schema(type: 'string', example: 'Modern Collection')
+        schema: new OA\Schema(type: 'string', example: 'poetry-net')
     )]
     #[OA\Parameter(
         name: 'article',
         description: 'Product article/SKU',
         in: 'query',
         required: true,
-        schema: new OA\Schema(type: 'string', example: 'TILE-12345')
+        schema: new OA\Schema(type: 'string', example: '17562-multi-grey-s000620013')
     )]
     #[OA\Response(
         response: 200,

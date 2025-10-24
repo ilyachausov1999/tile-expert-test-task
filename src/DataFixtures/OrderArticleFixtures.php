@@ -25,7 +25,7 @@ class OrderArticleFixtures extends Fixture implements DependentFixtureInterface
 
             for ($j = 0; $j < $articlesCount; $j++) {
                 $orderArticle = new OrderArticle();
-                $orderArticle->setOrderId($this->getReference('order_' . $orderIndex, Order::class)->getId());
+                $orderArticle->setOrder($this->getReference('order_' . $orderIndex, Order::class));
                 $article = $this->getReference('article_' . $faker->numberBetween(0, 49), Article::class);
                 $orderArticle->setArticleId($article->getId());
                 $amount = $faker->randomFloat(3, 1, 50);
